@@ -26,17 +26,11 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    th {
-      background-color: #4a90e2;
-      color: #fff;
+    th, td {
+      background-color: #fff;
+      border: 2px solid #ddd;
       padding: 15px;
-      font-weight: bold;
-    }
-
-    td {
-      padding: 10px;
       text-align: center;
-      border: 1px solid #ddd;
     }
 
     tr:hover {
@@ -45,28 +39,9 @@
     }
 
     @media (max-width: 600px) {
-      body {
-        font-size: 14px;
-      }
-
-      table {
-        font-size: 12px;
-      }
-
       th, td {
-        padding: 8px;
+        padding: 10px;
       }
-    }
-
-    tr {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.6s ease;
-    }
-
-    tr.show {
-      opacity: 1;
-      transform: translateY(0);
     }
   </style>
 </head>
@@ -82,9 +57,7 @@
     </thead>
     <tbody>
       <tr>
-        <td>読み込み中...</td>
-        <td></td>
-        <td></td>
+        <td colspan="3">読み込み中...</td>
       </tr>
     </tbody>
   </table>
@@ -117,13 +90,9 @@
             <td>${entry.points}</td>
           `;
           tableBody.appendChild(row);
-
-          setTimeout(() => {
-            row.classList.add("show");
-          }, index * 100);
         });
       } catch (error) {
-        console.error("CSVデータの取得に失敗しました:", error);
+        console.error("データ取得エラー:", error);
         const tableBody = document.querySelector("#rankingTable tbody");
         tableBody.innerHTML = `<tr><td colspan="3">エラー: データの読み込みに失敗しました。</td></tr>`;
       }
