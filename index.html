@@ -107,13 +107,17 @@
       try {
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-        const rows = text.split("\\n").map(row => row.split(","));
+
+        console.log("取得したデータ:", text); // コンソールで確認
+        const rows = text.split("\n").map(row => row.split(","));
+        console.log("分割された行:", rows); // 各列をログで出力
 
         const entries = rows.slice(1).map(row => ({
           player: row[0],
           xid: row[1],
           points: Number(row[2])
         }));
+        console.log("構造化されたデータ:", entries); // マッピング確認
 
         const sortedEntries = entries.sort((a, b) => b.points - a.points);
 
