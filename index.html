@@ -13,31 +13,26 @@
       margin: 0;
       padding: 20px;
     }
-
     h1 {
       text-align: center;
       color: #4a90e2;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
     th, td {
       background-color: #fff;
       border: 2px solid #ddd;
       padding: 15px;
       text-align: center;
     }
-
     tr:hover {
       background-color: #f0f4f8;
       cursor: pointer;
     }
-
     @media (max-width: 600px) {
       th, td {
         padding: 10px;
@@ -69,32 +64,31 @@
       try {
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-        const rows = text.split("\\n").map(row => row.split(","));
+        const rows = text.split("\n").map(row => row.split(","));
 
         const entries = rows.slice(1).map(row => ({
-          player: row[0],
-          points: Number(row[1])
+          player: row[0], // A列プレイヤー名
+          points: Number(row[1]) // B列ポイント
         }));
 
         const sortedEntries = entries.sort((a, b) => b.points - a.points);
 
         const tableBody = document.querySelector("#rankingTable tbody");
-        tableBody.innerHTML = "";
+        tableBody.innerHTML = ""; // テーブル初期化
 
         sortedEntries.forEach((entry, index) => {
           const row = document.createElement("tr");
-          const rankIcon = index === 0 ? "👑" : index === 1 ? "🥈" : index === 2 ? "🥉" : "";
           row.innerHTML = `
-            <td>${index + 1} ${rankIcon}</td>
-            <td>${entry.player}</td>
-            <td>${entry.points}</td>
+            <td>${index + 1}</td> <!-- 順位 -->
+            <td>${entry.player}</td> <!-- プレイヤー名 -->
+            <td>${entry.points}</td> <!-- ポイント -->
           `;
           tableBody.appendChild(row);
         });
       } catch (error) {
-        console.error("データ取得エラー:", error);
+        console.error("データ取得に失敗しました:", error);
         const tableBody = document.querySelector("#rankingTable tbody");
-        tableBody.innerHTML = `<tr><td colspan="3">エラー: データの読み込みに失敗しました。</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="3">エラー: データの取得に失敗しました。</td></tr>`;
       }
     }
 
