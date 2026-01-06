@@ -4,28 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ランキング表示</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      margin: 0;
       padding: 20px;
     }
-    h1 { text-align: center; }
+
+    h1 {
+      text-align: center;
+      color: #4a90e2;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    table, th, td {
-      border: 1px solid #ddd;
+
+    th {
+      background-color: #4a90e2;
+      color: #fff;
+      padding: 15px;
+      font-weight: bold;
     }
-    th, td {
+
+    td {
       padding: 10px;
       text-align: center;
+      border: 1px solid #ddd;
     }
-    th {
-      background-color: #f4f4f4;
+
+    tr:hover {
+      background-color: #f0f4f8;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 14px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+    }
+
+    tr {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    tr.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -47,39 +88,37 @@
   </table>
 
   <script>
-    // スプレッドシートのCSV形式URL
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWSwzkWgJm5mVl1o2edBnhQ7I09BTIaPCVaIjVgQaZxCMPgVMopgQrx05taLfoVibAwC7hGDj6AJtg/pub?output=csv";
 
-    // ランキングデータを取得し表示
     async function fetchRanking() {
       try {
-        // CSVデータを取得
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-
-        // CSVをパースしてデータに変換
-        const rows = text.split("\n").map(row => row.split(","));
+        const rows = text.split("\\n").map(row => row.split(","));
 
         const entries = rows.slice(1).map(row => ({
-          player: row[0], // A列（プレイヤー名）
-          points: Number(row[1]) // B列（ポイント）
+          player: row[0],
+          points: Number(row[1])
         }));
 
-        // ポイントでデータをソート
         const sortedEntries = entries.sort((a, b) => b.points - a.points);
 
-        // ランキングをテーブルに反映
         const tableBody = document.querySelector("#rankingTable tbody");
-        tableBody.innerHTML = ""; // 現在のデータをクリア
+        tableBody.innerHTML = "";
 
         sortedEntries.forEach((entry, index) => {
           const row = document.createElement("tr");
+          const rankIcon = index === 0 ? "👑" : index === 1 ? "🥈" : index === 2 ? "🥉" : "";
           row.innerHTML = `
-            <td>${index + 1}</td>
+            <td>${index + 1} ${rankIcon}</td>
             <td>${entry.player}</td>
             <td>${entry.points}</td>
           `;
           tableBody.appendChild(row);
+
+          setTimeout(() => {
+            row.classList.add("show");
+          }, index * 100);
         });
       } catch (error) {
         console.error("CSVデータの取得に失敗しました:", error);
@@ -88,7 +127,6 @@
       }
     }
 
-    // ランキングデータの取得を初期化
     fetchRanking();
   </script>
 </body>
